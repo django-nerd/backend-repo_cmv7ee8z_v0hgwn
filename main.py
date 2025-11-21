@@ -160,6 +160,15 @@ class StaffCreate(BaseModel):
     role: str
     pin: str
 
+@app.get("/api/staff")
+def list_staff():
+    # Return minimal public info, do not expose PINs
+    docs = get_documents("staff")
+    out = []
+    for d in docs:
+        out.append({"_id": str(d["_id"]), "name": d.get("name"), "role": d.get("role"), "is_active": d.get("is_active", True)})
+    return out
+
 @app.post("/api/staff", status_code=201)
 def create_staff(s: StaffCreate):
     staff_doc = Staff(**s.model_dump())
